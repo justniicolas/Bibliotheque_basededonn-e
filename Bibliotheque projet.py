@@ -1,4 +1,3 @@
-from dis import findlinestarts
 import mysql.connector as MC 
 conn = MC.connect(host="localhost",user="root",password="78110Bs78", database="biblio")
 cursor = conn.cursor()
