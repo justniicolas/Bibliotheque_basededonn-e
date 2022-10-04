@@ -1,6 +1,6 @@
 import mysql.connector as MC 
 
-conn = MC.connect(host="localhost",user="root",password="1234", database="biblio")
+conn = MC.connect(host="localhost",user="root",password="78110Bs78", database="biblio")
 cursor = conn.cursor()
 
 
@@ -49,11 +49,11 @@ try:
         print(i)
 
     if requete == '1' : 
-        titre_livre_recherche = input('Quelle est le titre de votre livre ? ')
-        cursor.execute("""SELECT id, titre_livre, code_rayon, auteurs, editeurs, date_acquisition FROM bibliotheque WHERE titre_livre = LIKE  '%' + titre_livre_recherche + '% """)
+        titre_livre_recherche = str(input('Quelle est le titre de votre livre ? '))
+        cursor.execute(f"SELECT id, titre_livre, code_rayon, auteurs, editeurs, date_acquisition FROM bibliotheque WHERE titre_livre = '{titre_livre_recherche}'")
         resultat = cursor.fetchall()
         for row in resultat:
-            print('{0}, {1}, {2}, {3}, {4}, {5},'.format(row[0], row[1], row[2], row[3], row[4], row[5]))
+            print(f"{row[0]},{row[1]},{row[2]},{row[3]},{row[4]},{row[5]}")
         
 
     if requete == '2' :
@@ -68,11 +68,5 @@ except Exception as e:
 finally:
     conn.commit()
     conn.close()
-
-
-
-
-
-
 
 
