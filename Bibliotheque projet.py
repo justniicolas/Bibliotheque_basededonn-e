@@ -128,7 +128,7 @@ try:
                 print('Retour effectué avec succès')
             else:
                 print("Le livre n'est pas réservé")
-        """
+        
         elif requete == 5 : 
             print ('')
             inscription_abonné = str(input('Vous êtes nouveau ? '))
@@ -136,19 +136,13 @@ try:
                 nom = str(input('Quel est votre nom ? '))
                 prenom = str(input('Quel est votre prénom ? '))
                 age = int(input('Quel est votre âge ? '))
-                cursor.execute(f"INSERT INTO abonnes = '{nom}'")
-                cursor.commit()
-                cursor.execute(f"INSERT INTO abonnes  = '{prenom}'")
-                cursor.commit()
-                cursor.execute(f"INSERT INTO abonnes  = '{age}'")
-                cursor.commit()
-                cursor.execute(f"SELECT id FROM abonnes WHERE nom and prenom and age = '{nom}' and '{prenom}' and '{age}'")
-                cursor.commit()
-                print("Vous êtes inscrit ! Voici votre identifiant", id)
+                cursor.execute(f"INSERT INTO abonnes (nom, prenom, age) VALUES ('{nom}','{prenom}','{age}')")
+                identifiant_abo = cursor.execute(f"SELECT id FROM abonnes WHERE nom and prenom and age = '{nom}' and '{prenom}' and '{age}'")
+                print("Vous êtes inscrit ! Voici votre identifiant", identifiant_abo)
             
             else : 
                 print("Vous n'êtes pas inscrit")
-            """
+           
 
 
 except Exception as e:
