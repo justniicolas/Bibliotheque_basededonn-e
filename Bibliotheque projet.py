@@ -1,6 +1,6 @@
 import mysql.connector as MC 
 
-conn = MC.connect(host="localhost",user="root",password="78110Bs78", database="biblio")
+conn = MC.connect(host="localhost",user="root",password="1234", database="biblio")
 cursor = conn.cursor()
 
 
@@ -19,6 +19,17 @@ try:
         PRIMARY KEY(id)
     );
     """)
+    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS abonnes (
+        id SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL,
+        nom VARCHAR(50) NOT NULL,
+        prenom VARCHAR(50) NOT NULL,
+        age INT NOT NULL, 
+        PRIMARY KEY(id)
+    );
+    """)
+  
     livres = [
         ("Belle", "10", "Marsden Todd", "Editions Atlas", "2019-06-16 12:35:58"),
         ("Isolation totale", "9", "Marsden Todd", "Editions Atlas", "2019-06-26 12:35:58"),
@@ -52,7 +63,7 @@ try:
     # for i in resultat:
     #     print(i)
     while True:
-        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\nQue voulez-vous faire ? "))
+        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Nouveau abonné\nQue voulez-vous faire ? "))
 
         if requete == 1: 
             titre_livre_recherche = str(input('Quelle est le titre de votre livre ? '))
@@ -117,6 +128,27 @@ try:
                 print('Retour effectué avec succès')
             else:
                 print("Le livre n'est pas réservé")
+        """
+        elif requete == 5 : 
+            print ('')
+            inscription_abonné = str(input('Vous êtes nouveau ? '))
+            if inscription_abonné == 'oui' or 'Oui' : 
+                nom = str(input('Quel est votre nom ? '))
+                prenom = str(input('Quel est votre prénom ? '))
+                age = int(input('Quel est votre âge ? '))
+                cursor.execute(f"INSERT INTO abonnes = '{nom}'")
+                cursor.commit()
+                cursor.execute(f"INSERT INTO abonnes  = '{prenom}'")
+                cursor.commit()
+                cursor.execute(f"INSERT INTO abonnes  = '{age}'")
+                cursor.commit()
+                cursor.execute(f"SELECT id FROM abonnes WHERE nom and prenom and age = '{nom}' and '{prenom}' and '{age}'")
+                cursor.commit()
+                print("Vous êtes inscrit ! Voici votre identifiant", id)
+            
+            else : 
+                print("Vous n'êtes pas inscrit")
+            """
 
 
 except Exception as e:
