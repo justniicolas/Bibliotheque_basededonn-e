@@ -141,7 +141,7 @@ try:
                 print("Vous êtes inscrit ! Voici votre identifiant", identifiant_abo)
             
             else : 
-                print("Vous n'êtes pas inscrit")
+                print("Vous n'êtes pas inscrit !")
            
 
 
