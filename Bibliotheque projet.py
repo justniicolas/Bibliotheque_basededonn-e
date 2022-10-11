@@ -14,98 +14,104 @@ except:
     conn.commit()
     cursor.execute("USE biblio_eh_ns;")
 
-try:
-    #####################################
-    ######## CREATION DES TABLES ########
-    #####################################
 
-    ### Table contenant les abonnés
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS abonnes (
-        id_abonne SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL,
-        nom VARCHAR(50) NOT NULL,
-        prenom VARCHAR(50) NOT NULL,
-        age INT NOT NULL, 
-        PRIMARY KEY(id_abonne)
-    );
-    """)
+#####################################
+######## CREATION DES TABLES ########
+#####################################
 
-    ### Table contenant les livres
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS bibliotheque (
-        id_livre SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL,
-        titre_livre VARCHAR(50) NOT NULL,
-        code_rayon INT NOT NULL,
-        auteur VARCHAR(50) NOT NULL, 
-        editeur VARCHAR(50) NOT NULL,
-        date_acquisition DATETIME NOT NULL,
-        etat VARCHAR(10), 
-        reservation INT,
-        id_abonne SMALLINT REFERENCES abonnes(id_abonne),
-        PRIMARY KEY(id_livre)
-    );
-    """)
+### Table contenant les abonnés
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS abonnes (
+    id_abonne SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    nom VARCHAR(50) NOT NULL,
+    prenom VARCHAR(50) NOT NULL,
+    age INT NOT NULL, 
+    courriel VARCHAR(70) NOT NULL, 
+    PRIMARY KEY(id_abonne)
+);
+""")
 
-    livres = [
-        ("Belle", "10", "Marsden Todd", "Editions Atlas", "2019-06-16 12:35:58"),
-        ("Isolation totale", "9", "Marsden Todd", "Editions Atlas", "2019-06-26 12:35:58"),
-        ("Isolation totale", "9", "Merritt Garcia", "Editions Atlas", "2019-06-26 12:35:58"),
-        ("La marche du siècle", "6", "Tucker Patton", "Gallimard", "2019-05-22 12:35:58"),
-        ("Lagon Bleu", "4", "Scott Villarreal", "Milady", "2019-02-17 12:35:58"),
-        ("Le trône écarlate", "10", "Fritz Dennis", "Eyrolles", "2019-08-19 12:35:58"),
-        ("Le trône écarlate", "10", "Fritz Dennis", "Gallimard", "2019-03-12 12:35:58"),
-        ("Le trône écarlate", "10", "Fritz Dennis", "Hachette", "2019-08-18 12:35:58"),
-        ("Les 9 couronnes", "1", "John Harris", "Hachette", "2019-08-18 12:35:58"),
-        ("Les 9 couronnes", "1", "Nathan Barber", "Hachette", "2019-02-12 12:35:58"),
-        ("Les fleurs du Mal", "5", "John Harris", "Editions Atlas", "2019-01-30 12:35:58"),
-        ("Les fleurs du Mal", "5", "Oscar Paul", "Editions Atlas", "2019-01-30 12:35:58"),
-        ("Les fleurs du Mal", "5", "John Harris", "Flammarion", "2019-08-10 12:35:58"),
-        ("Les fleurs du Mal", "5", "Oscar Paul", "Flammarion", "2019-08-10 12:35:58"),
-        ("Puits sans fond", "2", "Oscar Paul", "Eyrolles", "2019-04-23 12:35:58"),
-        ("Puits sans fond", "2", "Nathan Barber", "Eyrolles", "2019-04-23 12:35:58"),
-        ("Trois dans un appartement", "4", "Alfonso Fuentes", "Bayard", "2019-06-16 12:35:58"),
-        ("Vol de nuit", "2", "Marshall Mccoy", "Editions Atlas", "2019-06-16 12:35:58"),
-    ]
+### Table contenant les livres
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS bibliotheque (
+    id_livre SMALLINT UNSIGNED AUTO_INCREMENT NOT NULL,
+    titre_livre VARCHAR(50) NOT NULL,
+    code_rayon INT NOT NULL,
+    auteur VARCHAR(50) NOT NULL, 
+    editeur VARCHAR(50) NOT NULL,
+    date_acquisition DATETIME NOT NULL,
+    etat VARCHAR(10), 
+    reservation INT,
+    id_abonne SMALLINT REFERENCES abonnes(id_abonne),
+    PRIMARY KEY(id_livre)
+);
+""")
 
-    #######################################################
-    ######## INSERTION DES VALEURS DANS LES TABLES ########
-    #######################################################
-    cursor.execute("SELECT * FROM bibliotheque")
-    test_livres = cursor.fetchall()
-    if len(test_livres) == 0:
-        for i in livres:
-            cursor.execute("""INSERT INTO bibliotheque (id_livre, titre_livre, code_rayon, auteur, editeur, date_acquisition) VALUES(NULL, %s, %s, %s, %s, %s)""", i)
-        conn.commit()
+livres = [
+    ("Belle", "10", "Marsden Todd", "Editions Atlas", "2019-06-16 12:35:58"),
+    ("Isolation totale", "9", "Marsden Todd", "Editions Atlas", "2019-06-26 12:35:58"),
+    ("Isolation totale", "9", "Merritt Garcia", "Editions Atlas", "2019-06-26 12:35:58"),
+    ("La marche du siècle", "6", "Tucker Patton", "Gallimard", "2019-05-22 12:35:58"),
+    ("Lagon Bleu", "4", "Scott Villarreal", "Milady", "2019-02-17 12:35:58"),
+    ("Le trône écarlate", "10", "Fritz Dennis", "Eyrolles", "2019-08-19 12:35:58"),
+    ("Le trône écarlate", "10", "Fritz Dennis", "Gallimard", "2019-03-12 12:35:58"),
+    ("Le trône écarlate", "10", "Fritz Dennis", "Hachette", "2019-08-18 12:35:58"),
+    ("Les 9 couronnes", "1", "John Harris", "Hachette", "2019-08-18 12:35:58"),
+    ("Les 9 couronnes", "1", "Nathan Barber", "Hachette", "2019-02-12 12:35:58"),
+    ("Les fleurs du Mal", "5", "John Harris", "Editions Atlas", "2019-01-30 12:35:58"),
+    ("Les fleurs du Mal", "5", "Oscar Paul", "Editions Atlas", "2019-01-30 12:35:58"),
+    ("Les fleurs du Mal", "5", "John Harris", "Flammarion", "2019-08-10 12:35:58"),
+    ("Les fleurs du Mal", "5", "Oscar Paul", "Flammarion", "2019-08-10 12:35:58"),
+    ("Puits sans fond", "2", "Oscar Paul", "Eyrolles", "2019-04-23 12:35:58"),
+    ("Puits sans fond", "2", "Nathan Barber", "Eyrolles", "2019-04-23 12:35:58"),
+    ("Trois dans un appartement", "4", "Alfonso Fuentes", "Bayard", "2019-06-16 12:35:58"),
+    ("Vol de nuit", "2", "Marshall Mccoy", "Editions Atlas", "2019-06-16 12:35:58"),
+]
 
-    ############################################
-    ######## CONNEXION DE L'UTILISATEUR ########
-    ############################################
-    print('Bienvenue !')
-    hasAccount = int(input("Options disponibles :\n - [1] Oui\n - [2] Non\nAvez-vous déjà un compte ? "))
+#######################################################
+######## INSERTION DES VALEURS DANS LES TABLES ########
+#######################################################
+cursor.execute("SELECT * FROM bibliotheque")
+test_livres = cursor.fetchall()
+if len(test_livres) == 0:
+    for i in livres:
+        cursor.execute("""INSERT INTO bibliotheque (id_livre, titre_livre, code_rayon, auteur, editeur, date_acquisition) VALUES(NULL, %s, %s, %s, %s, %s)""", i)
+    conn.commit()
+
+############################################
+######## CONNEXION DE L'UTILISATEUR ########
+############################################
+print('Bienvenue !')
+hasAccount = int(input("Options disponibles :\n - [1] Oui\n - [2] Non\nAvez-vous déjà un compte ? "))
+while True:
     if hasAccount == 1:
         id_account = int(input("Quel est votre identifiant ? "))
         prenom_account = str(input("Quel est votre prénom ? ")).lower()
         cursor.execute(f"SELECT * FROM abonnes WHERE id_abonne = '{id_account}' AND prenom = '{prenom_account}'")
         account_details = cursor.fetchone()
+        break
     else:
         prenom_account = str(input("Quel est votre prénom ? ")).lower()
         nom_account = str(input("Quel est votre nom ? ")).lower()
         age_account = int(input("Quel âge avez-vous ? "))
-        cursor.execute(f"SELECT * FROM abonnes WHERE nom = '{nom_account}' AND prenom = '{prenom_account}' AND age = '{age_account}'")
+        courriel_account = str(input('Quel est votre adresse mail ? ')).lower()
+        cursor.execute(f"SELECT * FROM abonnes WHERE nom = '{nom_account}' AND prenom = '{prenom_account}' AND age = '{age_account}' AND courriel = '{courriel_account}'")
         accountExists = cursor.fetchone()
+        conn.commit()
+
         if accountExists:
             print("Cette personne possède déjà un compte !")
             account_details = None
         else:
-            # ERREURS ICI
-            print(nom_account, prenom_account, age_account)
-            cursor.execute(f"INSERT INTO abonnes VALUES (NULL, '{nom_account}', '{prenom_account}', '{age_account}')")
-            
-            cursor.execute(f"SELECT * FROM abonnes WHERE nom = '{nom_account}' AND prenom = '{prenom_account}' AND age = '{age_account}'")
-            
+            print(nom_account, prenom_account, age_account, courriel_account)
+            cursor.execute(f"INSERT INTO abonnes VALUES (NULL, '{nom_account}', '{prenom_account}', '{age_account}', '{courriel_account}')")
+            conn.commit()
+            cursor.execute(f"SELECT * FROM abonnes WHERE nom = '{nom_account}' AND prenom = '{prenom_account}' AND age = '{age_account}' AND courriel = '{courriel_account}' ")
             account_details = cursor.fetchone()
+            print(f"Votre identifiant est {account_details[0]}, NE LE PERDEZ PAS !")
+            break
 
-    if account_details:
+if account_details:
     ### Si l'utilisateur est connecté
     print('\nBienvenue sur le portail de votre bibliothèque !\nMenu principal :')
     while True:
