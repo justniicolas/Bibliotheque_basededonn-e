@@ -89,7 +89,10 @@ while True:
         prenom_account = str(input("Quel est votre prénom ? ")).lower()
         cursor.execute(f"SELECT * FROM abonnes WHERE id_abonne = '{id_account}' AND prenom = '{prenom_account}'")
         account_details = cursor.fetchone()
-        break
+        if account_details:
+            break
+        else:
+            print("This user doesnt exist")
     else:
         prenom_account = str(input("Quel est votre prénom ? ")).lower()
         nom_account = str(input("Quel est votre nom ? ")).lower()
