@@ -4,7 +4,7 @@ import mysql.connector as MC
 ######## CONNEXION AU SERVEUR MYSQL ########
 ############################################
 
-conn = MC.connect(host="localhost",user="root",password="78110Bs78")
+conn = MC.connect(host="localhost",user="root",password="1234")
 cursor = conn.cursor()
 
 try:
@@ -187,12 +187,15 @@ if account_details:
             etat = cursor.fetchall()
             print('')
             if etat[0][6] == None:
-                cursor.execute(f"UPDATE bibliotheque SET etat = 'reserve' WHERE id_livre = {identifiant}")
+                cursor.execute(f"UPDATE bibliotheque SET etat = 'reserve' WHERE id_livre = '{identifiant}'")
                 conn.commit()
                 id_abonne = str(input('Quel est votre identifiant de compte ?'))
                 cursor.execute(f"SELECT * FROM abonnes WHERE id_abonne = '{id_abonne}'")
+                #ERREUR ICI
+                """cursor.execute(f"UPDATE bibliotheque SET id_abonne = '{id_abonne}' WHERE id_livre = '{identifiant}'")"""
                 if cursor.fetchone():
                     print('Réservation effectuée avec succès')
+                    
                 else : 
                     print('Réservation non effectuée')
             else:
@@ -206,10 +209,10 @@ if account_details:
             print('')
             if etat[0][6] == 'reserve':
                 id_abonne = str(input('Quel est votre identifiant de compte ?'))
-                cursor.execute(f"SELECT * FROM bibliotheque WHERE id_abonne = '{id_abonne} and id_livre = '{identifiant}'")
+                cursor.execute(f"SELECT * FROM bibliotheque WHERE id_abonne = '{id_abonne}' and id_livre = '{identifiant}'")
                 if cursor.fetchone(): 
                     cursor.execute(f"UPDATE bibliotheque SET etat = NULL WHERE id_livre = {identifiant}")
-                    cursor.execute(f"UPDATE bibliotheque SET etat = NULL WHERE id_livre = {identifiant}")
+                    cursor.execute(f"UPDATE bibliotheque SET id_abonne = NULL WHERE id_abonne = {id_abonne}")
                     conn.commit()
                     print('Retour effectué avec succès')
                 else : 
@@ -251,4 +254,3 @@ if account_details:
 
 conn.commit()
 conn.close()
-
