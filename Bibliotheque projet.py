@@ -1,4 +1,15 @@
 import mysql.connector as MC
+from datetime import date
+from datetime import datetime, timedelta
+
+
+############################################
+############ INSERTION TIME ################
+############################################
+date_jour = date.today() 
+hier_jour = date_jour - timedelta(1)
+demain_jour = date_jour + timedelta(1)
+semaine_prochaine = date_jour + timedelta(7)
 
 ############################################
 ######## CONNEXION AU SERVEUR MYSQL ########
@@ -41,7 +52,7 @@ CREATE TABLE IF NOT EXISTS bibliotheque (
     editeur VARCHAR(50) NOT NULL,
     date_acquisition DATETIME NOT NULL,
     etat VARCHAR(10), 
-    reservation INT,
+    reservation VARCHAR(10),
     id_abonne SMALLINT REFERENCES abonnes(id_abonne),
     PRIMARY KEY(id_livre)
 );
@@ -82,6 +93,7 @@ if len(test_livres) == 0:
 ######## CONNEXION DE L'UTILISATEUR ########
 ############################################
 print('Bienvenue !')
+
 hasAccount = int(input("Options disponibles :\n - [1] Oui\n - [2] Non\nAvez-vous déjà un compte ? "))
 while True:
     if hasAccount == 1:
@@ -118,7 +130,7 @@ if account_details:
     ### Si l'utilisateur est connecté
     print('\nBienvenue sur le portail de votre bibliothèque !\nMenu principal :')
     while True:
-        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Recherche par éditeur\n - [6] Réservations pour identifiant\n - [7] Réservations pour courriel\nQue voulez-vous faire ? "))
+        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Recherche par éditeur\n - [6] Réservations pour identifiant\n - [7] Réservations pour courriel\n - [8] Date origine emprunt\nQue voulez-vous faire ? "))
 
         if requete == 1: 
             print('')
@@ -187,17 +199,22 @@ if account_details:
             etat = cursor.fetchall()
             print('')
             if etat[0][6] == None:
-                cursor.execute(f"UPDATE bibliotheque SET etat = 'reserve' WHERE id_livre = '{identifiant}'")
+                
+                cursor.execute(f"UPDATE bibliotheque SET reservation = '{date_jour}' WHERE id_livre = '{identifiant}'")
                 conn.commit()
-                id_abonne = str(input('Quel est votre identifiant de compte ?'))
-                cursor.execute(f"SELECT * FROM abonnes WHERE id_abonne = '{id_abonne}'")
-                #ERREUR ICI
-                """cursor.execute(f"UPDATE bibliotheque SET id_abonne = '{id_abonne}' WHERE id_livre = '{identifiant}'")"""
-                if cursor.fetchone():
+                cursor.execute(f"UPDATE bibliotheque SET etat = 'reserve'  WHERE id_livre = '{identifiant}'")
+                conn.commit()
+                cursor.execute(f"UPDATE bibliotheque SET id_abonne = '{account_details[0]}' WHERE id_livre = '{identifiant}'")
+                conn.commit()
+                
+                if cursor.fetchall():
+                    print('La réservation a une durée de 7 jours.')
                     print('Réservation effectuée avec succès')
                     
                 else : 
-                    print('Réservation non effectuée')
+                    print('La réservation a une durée de 7 jours.')
+                    print('La date limite de votre réservation est le',date_jour + timedelta(7) )
+                    print('Réservation effectuée avec succès')
             else:
                 print("Le livre est déjà réservé")
 
@@ -208,11 +225,12 @@ if account_details:
             etat = cursor.fetchall()
             print('')
             if etat[0][6] == 'reserve':
-                id_abonne = str(input('Quel est votre identifiant de compte ?'))
-                cursor.execute(f"SELECT * FROM bibliotheque WHERE id_abonne = '{id_abonne}' and id_livre = '{identifiant}'")
+                """id_abonne = str(input('Quel est votre identifiant de compte ?'))"""
+                
+                cursor.execute(f"SELECT * FROM bibliotheque WHERE id_abonne = '{account_details[0]}' and id_livre = '{identifiant}'")
                 if cursor.fetchone(): 
                     cursor.execute(f"UPDATE bibliotheque SET etat = NULL WHERE id_livre = {identifiant}")
-                    cursor.execute(f"UPDATE bibliotheque SET id_abonne = NULL WHERE id_abonne = {id_abonne}")
+                    cursor.execute(f"UPDATE bibliotheque SET id_abonne = NULL WHERE id_abonne = {account_details[0]}")
                     conn.commit()
                     print('Retour effectué avec succès')
                 else : 
@@ -237,7 +255,7 @@ if account_details:
                             liste_resultats.append(livre_data)
                     print('')
                     print('Votre recherche a donné les résultats suivants :')
-                    for res in liste_resultats:
+                    for res in liste_resultats:  
                         print('')
                         print(f" - {res}")
                     del resultat
@@ -318,6 +336,14 @@ if account_details:
                 print('')
                 print("Votre recherche n'a donné aucun résultat.")
                 pass
+
+        elif requete == 8:
+            print('')
+            livre_recherche_reservation = str(input("Quel est le livre ? "))
+            cursor.execute(f"SELECT reservation FROM bibliotheque WHERE titre_livre= '{livre_recherche_reservation}' AND etat = 'reserve'")
+            resultat = cursor.fetchone()
+            print("Le livre est réservé depuis le",resultat)
+   
 
 
 conn.commit()
