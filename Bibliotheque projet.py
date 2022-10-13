@@ -118,7 +118,7 @@ if account_details:
     ### Si l'utilisateur est connecté
     print('\nBienvenue sur le portail de votre bibliothèque !\nMenu principal :')
     while True:
-        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Recherche par éditeur\nQue voulez-vous faire ? "))
+        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Recherche par éditeur\n - [6] Réservations pour identifiant\n - [7] Réservations pour courriel\nQue voulez-vous faire ? "))
 
         if requete == 1: 
             print('')
@@ -250,6 +250,74 @@ if account_details:
                 print("Votre recherche n'a donné aucun résultat.")
                 pass
 
+        
+        elif requete == 6:
+            print('')
+            livre_recherche_reservation = str(input("Quel est le livre ? "))
+            liste_mots = livre_recherche_reservation.split()
+            liste_resultats = []
+            for mot in liste_mots:
+                if len(mot) >= 3 and mot != 'les':
+                    cursor.execute(f"SELECT titre_livre, auteur, editeur, code_rayon, id_livre, id_abonne FROM bibliotheque WHERE titre_livre LIKE '%{mot}%'")
+                    resultat = cursor.fetchall()
+            try:
+                if len(resultat) > 0:
+                    for row in resultat:
+                        recherche_id = row[5]
+                        print(recherche_id)
+                        cursor.execute (f"SELECT nom, prenom FROM abonnes WHERE id_abonne = '{recherche_id}'")
+                        id_prenom_nom = cursor.fetchall()
+                        print(id_prenom_nom)
+                        livre_data = f"{row[0]}, écrit par {row[1]}, Réservation par : {id_prenom_nom}"
+                        if livre_data not in liste_resultats:
+                            liste_resultats.append(livre_data)
+                    print('')
+                    print('Votre recherche a donné les résultats suivants :')
+                    for res in liste_resultats:
+                        print('')
+                        print(f" - {res}")
+                    del resultat
+                else:
+                    print('')
+                    print("Votre recherche n'a donné aucun résultat.")
+                    del resultat
+            except:
+                print('')
+                print("Votre recherche n'a donné aucun résultat.")
+                pass
+        
+        elif requete == 7:
+            print('')
+            livre_recherche_reservation = str(input("Quel est le livre ? "))
+            liste_mots = livre_recherche_reservation.split()
+            liste_resultats = []
+            for mot in liste_mots:
+                if len(mot) >= 3 and mot != 'les':
+                    cursor.execute(f"SELECT titre_livre, auteur, editeur, code_rayon, id_livre, id_abonne FROM bibliotheque WHERE titre_livre LIKE '%{mot}%'")
+                    resultat = cursor.fetchall()
+            try:
+                if len(resultat) > 0:
+                    for row in resultat:
+                        recherche_id = row[5]
+                        cursor.execute (f"SELECT courriel FROM abonnes WHERE id_abonne = '{recherche_id}'")
+                        id_courriel = cursor.fetchall()
+                        livre_data = f"{row[0]}, écrit par {row[1]}, Réservation par l'adresse : {id_courriel}"
+                        if livre_data not in liste_resultats:
+                            liste_resultats.append(livre_data)
+                    print('')
+                    print('Votre recherche a donné les résultats suivants :')
+                    for res in liste_resultats:
+                        print('')
+                        print(f" - {res}")
+                    del resultat
+                else:
+                    print('')
+                    print("Votre recherche n'a donné aucun résultat.")
+                    del resultat
+            except:
+                print('')
+                print("Votre recherche n'a donné aucun résultat.")
+                pass
 
 
 conn.commit()
