@@ -130,7 +130,7 @@ if account_details:
     ### Si l'utilisateur est connecté
     print('\nBienvenue sur le portail de votre bibliothèque !\nMenu principal :')
     while True:
-        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Recherche par éditeur\n - [6] Réservations pour identifiant\n - [7] Réservations pour courriel\n - [8] Date origine emprunt\nQue voulez-vous faire ? "))
+        requete = int(input("\nOptions disponibles :\n - [1] Recherche par titre\n - [2] Recherche par auteur\n - [3] Réservation d'une oeuvre\n - [4] Retour d'une oeuvre\n - [5] Recherche par éditeur\n - [6] Réservations pour identifiant\n - [7] Réservations pour courriel\n - [8] Date origine emprunt\n - [9] Livre à rendre demain\n - [10] Livre en retard\nQue voulez-vous faire ? "))
 
         if requete == 1: 
             print('')
@@ -344,45 +344,63 @@ if account_details:
             resultat = cursor.fetchone()
             print("Le livre est réservé depuis le",resultat)
 
-        elif requete == 9:
-            print('')
-            cursor.execute(f"SELECT reservation FROM bibliotheque WHERE reservation = '{demain_jour}'")
-            resultat = cursor.fetchone()
-            if len(resultat) > 0:
-                    for row in resultat:
-                        livre_data = f"{row[0]}"
-                        if livre_data not in liste_resultats:
-                            liste_resultats.append(livre_data)
-                    print('')
-                    print('Les livres qui doivent être rendu demain sont : ')
-                    for res in liste_resultats:
-                        print('')
-                        print(f" - {res}")
-                    del resultat
-            else:
-                print('')
-                print("Votre recherche n'a donné aucun résultat.")
-                del resultat
 
-        elif requete == 10:
+        elif requete == 9 : 
             print('')
-            cursor.execute(f"SELECT reservation FROM bibliotheque WHERE reservation < '{date_jour}'")
-            resultat = cursor.fetchone()
-            if len(resultat) > 0:
+            liste_resultats = []
+            cursor.execute(f"SELECT titre_livre, auteur, editeur, code_rayon, id_livre, id_abonne FROM bibliotheque WHERE reservation = '{date_jour - timedelta(6)}'")
+            resultat = cursor.fetchall()
+            try:
+                if len(resultat) > 0:
                     for row in resultat:
-                        livre_data = f"{row[0]}"
+                        livre_data = f"{row[0]}, écrit par {row[1]}, Réservé par : '{row[5]}'"
                         if livre_data not in liste_resultats:
                             liste_resultats.append(livre_data)
+                            
                     print('')
-                    print('Les livres qui sont en retard : ')
+                    print('Les livres qui doivent être rendu demain sont :')
                     for res in liste_resultats:
                         print('')
                         print(f" - {res}")
                     del resultat
-            else:
+                else:
+                    print('')
+                    print("Aucun livre ne doit être rendu demain.")
+                    del resultat
+            except:
                 print('')
                 print("Votre recherche n'a donné aucun résultat.")
-                del resultat
+                pass
+
+        elif requete == 10 : 
+            print('')
+            liste_resultats = []
+            cursor.execute(f"SELECT titre_livre, auteur, editeur, code_rayon, id_livre, id_abonne FROM bibliotheque WHERE reservation <= '{date_jour - timedelta(7)}'")
+            resultat = cursor.fetchall()
+            try:
+                if len(resultat) > 0:
+                    for row in resultat:
+                        livre_data = f"{row[0]}, écrit par {row[1]}, Réservé par : '{row[5]}'"
+                        if livre_data not in liste_resultats:
+                            liste_resultats.append(livre_data)
+                            
+                    print('')
+                    print('Les livres qui sont en retard sont :')
+                    for res in liste_resultats:
+                        print('')
+                        print(f" - {res}")
+                    del resultat
+                else:
+                    print('')
+                    print("Aucun livre est en retard.")
+                    del resultat
+            except:
+                print('')
+                print("Votre recherche n'a donné aucun résultat.")
+                pass
+        
+
+        
 
 conn.commit()
 conn.close()
