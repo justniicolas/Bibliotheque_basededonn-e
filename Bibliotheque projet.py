@@ -282,10 +282,10 @@ if account_details:
                 if len(resultat) > 0:
                     for row in resultat:
                         recherche_id = row[5]
-                        print(recherche_id)
+                        
                         cursor.execute (f"SELECT nom, prenom FROM abonnes WHERE id_abonne = '{recherche_id}'")
                         id_prenom_nom = cursor.fetchall()
-                        print(id_prenom_nom)
+                       
                         livre_data = f"{row[0]}, écrit par {row[1]}, Réservation par : {id_prenom_nom}"
                         if livre_data not in liste_resultats:
                             liste_resultats.append(livre_data)
@@ -343,8 +343,46 @@ if account_details:
             cursor.execute(f"SELECT reservation FROM bibliotheque WHERE titre_livre= '{livre_recherche_reservation}' AND etat = 'reserve'")
             resultat = cursor.fetchone()
             print("Le livre est réservé depuis le",resultat)
-   
 
+        elif requete == 9:
+            print('')
+            cursor.execute(f"SELECT reservation FROM bibliotheque WHERE reservation = '{demain_jour}'")
+            resultat = cursor.fetchone()
+            if len(resultat) > 0:
+                    for row in resultat:
+                        livre_data = f"{row[0]}"
+                        if livre_data not in liste_resultats:
+                            liste_resultats.append(livre_data)
+                    print('')
+                    print('Les livres qui doivent être rendu demain sont : ')
+                    for res in liste_resultats:
+                        print('')
+                        print(f" - {res}")
+                    del resultat
+            else:
+                print('')
+                print("Votre recherche n'a donné aucun résultat.")
+                del resultat
+
+        elif requete == 10:
+            print('')
+            cursor.execute(f"SELECT reservation FROM bibliotheque WHERE reservation < '{date_jour}'")
+            resultat = cursor.fetchone()
+            if len(resultat) > 0:
+                    for row in resultat:
+                        livre_data = f"{row[0]}"
+                        if livre_data not in liste_resultats:
+                            liste_resultats.append(livre_data)
+                    print('')
+                    print('Les livres qui sont en retard : ')
+                    for res in liste_resultats:
+                        print('')
+                        print(f" - {res}")
+                    del resultat
+            else:
+                print('')
+                print("Votre recherche n'a donné aucun résultat.")
+                del resultat
 
 conn.commit()
 conn.close()
